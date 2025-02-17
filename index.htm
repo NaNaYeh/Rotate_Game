@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>game 小瑪莉遊戲機</title>
+
+<style>
+	*{ margin:0px; padding:0px; box-sizing:border-box; font-family: Meiryo, "Meiryo UI", "Microsoft JhengHei UI", "Microsoft JhengHei", sans-serif; font-style:normal;}
+
+	/*預設連結狀態*/
+	a:link, a:visited { color: #555; text-decoration:none;}
+	a:hover, a:active { color: #fa940c;}
+
+	ul{ list-style:none;}
+	/*圖片無框*/
+	a img { border:none;}
+	/*去除圖片底下空白*/
+	img{ vertical-align: bottom;} 
+
+	/*清除 clearfix*/
+	.clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden;}
+	
+	html, body{ height:100%; background:linear-gradient(to bottom, #14012f 0%, #4d2e67 25%,#14012f 100%) no-repeat;}
+	.wrapper{ width:100%; max-width:640px; margin:0px auto;}
+
+	/*game*/
+	.game{ margin:0px auto; padding:20px 0px 20px 0px; text-align:center;}
+	.game .result_box{ margin-bottom:15px;}
+	.game .result_box h3.title{ display:block; width:220px; margin:0px auto; padding:5px 0px 5px 0px; border-radius:30px 30px 0px 0px; text-align:center; font-weight:800; color:#aa2016; border:5px solid #fcbf28; border-bottom:0px; background:linear-gradient(to right, #f4912c 0%, #fce9a4 50%,#f47e1e 100%);}
+	/*list*/
+	.game .result_box ul.list{ width:300px; height:300px; margin:0px auto 0px auto; position:relative; background:url("images/bg.png") no-repeat; background-size:100% auto;}
+	.game .result_box ul.list li{ display:inline-block; width:80px; height:80px; font-size:14px; border-radius:5px; border:1px solid #fff; position:absolute; text-indent:100%; white-space:nowrap; overflow:hidden; }
+
+	.game .result_box ul.list li:nth-of-type(1){ background:url("images/pic_00.png"); background-size:100% auto; top:30px; left:30px;}
+	.game .result_box ul.list li:nth-of-type(2){ background:url("images/pic_01.png"); background-size:100% auto; top:30px; left:110px;}
+	.game .result_box ul.list li:nth-of-type(3){ background:url("images/pic_02.png"); background-size:100% auto; top:30px; left:190px;}
+	.game .result_box ul.list li:nth-of-type(4){ background:url("images/pic_03.png"); background-size:100% auto; top:110px; left:190px;}
+	.game .result_box ul.list li:nth-of-type(5){ background:url("images/pic_04.png"); background-size:100% auto; top:190px; left:190px;}
+	.game .result_box ul.list li:nth-of-type(6){ background:url("images/pic_05.png"); background-size:100% auto; top:190px; left:110px;}
+	.game .result_box ul.list li:nth-of-type(7){ background:url("images/pic_06.png"); background-size:100% auto; top:190px; left:30px;}
+	.game .result_box ul.list li:nth-of-type(8){ background:url("images/pic_07.png"); background-size:100% auto; top:110px; left:30px;}
+
+	/*中獎燈*/
+	.game .result_box ul.list li.active{ background-color:rgba(238,110,1,0.75);}
+
+	/*choose_box*/
+	.game .choose_box{ margin-bottom:15px; font-size:0px;}
+	.game .choose_box h3.title{ margin:0px auto 5px auto; text-align:center; color:#fff; font-size:16px;}
+	.game .choose_box ul.bar{ width:300px; margin:0px auto 0px auto; padding:10px 25px; border-radius:20px; border:5px solid #fcbf28;}
+	
+	.game .choose_box ul.bar li{ display:inline-block; width:50px; height:50px; line-height:50px; margin:0px 10px 10px 0px; font-size:24px; text-align:center; border-radius:5px; background:#555 url("images/bar.png") no-repeat; background-size:auto 100%; background-position:calc(-50px * var(--x)); text-indent:100%; white-space:nowrap; overflow:hidden;}
+
+	.game .choose_box ul.bar li:nth-of-type(1){ --x:0;}
+	.game .choose_box ul.bar li:nth-of-type(2){ --x:1;}
+	.game .choose_box ul.bar li:nth-of-type(3){ --x:2;}
+	.game .choose_box ul.bar li:nth-of-type(4){ --x:3;}
+	.game .choose_box ul.bar li:nth-of-type(5){ --x:4; margin-bottom:0px;}
+	.game .choose_box ul.bar li:nth-of-type(6){ --x:5; margin-bottom:0px;}
+	.game .choose_box ul.bar li:nth-of-type(7){ --x:6; margin-bottom:0px;}
+	.game .choose_box ul.bar li:nth-of-type(8){ --x:7; margin-bottom:0px;}
+	
+	.game .choose_box ul.bar li.active{ color:#fff; background-color:#8962c8; box-shadow: 1px 1px 8px #9781c2;}
+
+	/*btn_replay*/
+	button.btn.btn_go{ display:inline-block; width:40%; padding:10px 10px; border-radius:10px; color:#fff; font-weight:800; font-size:16px; border:3px solid #fcbf28; background:linear-gradient(to bottom, #f14f67 0%,#c7212f 100%); display:none;}
+	
+	/*dialog*/
+	.dialog{ width:100%; height:100%; position:fixed; top:0px; left:0px; z-index:50; }
+
+	
+	.dialog{ background:rgba(0,0,0,0.75);}
+	.dialog .content{ margin:0px auto; text-align:center; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);}
+
+	.dialog.rule .content .txt{ width:300px; margin-bottom:20px; padding:0px 20px 20px 20px; text-align:center; border-radius:10px; border:5px solid #fcbf28; background:linear-gradient(to bottom, #512b81 0%, #35155d 100%);}
+
+	.dialog.rule .content .txt::before{ content:""; display:block; width:100px; height:40px; background:url("images/rule_title.png") no-repeat; background-size:100% auto; position: relative; top:-50px; left:80px;}
+
+	.dialog.rule .content .txt p{ margin-bottom:10px; padding:3px 0px; border-radius:10px; background:#eee; color:#35155d;}
+	.dialog.rule .content .txt .pic:nth-of-type(1){ width:250px; height:50px; margin-bottom:10px; overflow:hidden; border-radius:10px;}
+	.dialog.rule .content .txt .pic:nth-of-type(2){ width:100px; height:100px; margin:0px auto;}
+	.dialog.rule .content .txt .pic img{ display:block; width:100%; height:auto; object-fit:cover;}
+
+	.dialog.rule button.btn_start{ display:inline-block; width:100px; padding:10px 10px; border-radius:10px; text-align:center; color:#fff; font-weight:800; font-size:16px; border:3px solid #fcbf28; background:linear-gradient(to bottom, #8cabff 0%,#4a65ad 100%);}
+
+	/*win*/
+	.dialog.win{ display:none;}
+	.dialog.win .content p{ display:block; margin-bottom:10px; border-radius:20px; font-weight:800; text-align:center; font-size:40px; color:#fff; text-shadow:2px 2px 10px #eb5a56;}
+	.dialog.win .content .pic{ width:200px; height:200px; margin:0px auto 20px auto;}
+	.dialog.win .content .pic img{ display:block; width:100%; height:auto; object-fit:cover;}
+	.dialog.win button.btn.btn_replay{ display:inline-block; width:100%; padding:10px 10px; border-radius:10px; text-align:center; color:#fff; font-weight:800; font-size:16px; border:3px solid #fcbf28; background:linear-gradient(to bottom, #f14f67 0%,#c7212f 100%);}
+
+	/*lose*/
+	.dialog.lose{ display:none;}
+	.dialog.lose .content p{ display:block; margin-bottom:10px; border-radius:20px; font-weight:800; text-align:center; font-size:40px; color:#fff; text-shadow:2px 2px 10px #0c5188;}
+	.dialog.lose .content .pic{ width:200px; height:200px; margin:0px auto 20px auto;}
+	.dialog.lose .content .pic img{ display:block; width:100%; height:auto; object-fit:cover;}
+	.dialog.lose button.btn.btn_replay{ display:inline-block; width:100%; padding:10px 10px; border-radius:10px; text-align:center; color:#fff; font-weight:800; font-size:16px; border:3px solid #fcbf28; background:linear-gradient(to bottom, #337CCF 0%,#1450A3 100%);}
+
+</style>
+
+</head>
+<body>
+	<!--wrapper 開始-->
+	<div class="wrapper">
+
+		<!--說明頁 開始-->
+		<div class="dialog rule">
+
+			<!--content 開始-->
+			<div class="content">
+
+				<div class="txt">
+					<p>01.請先選擇其中一圖</p>
+					<!--pic-->
+					<div class="pic">
+						<img src="images/pic_rule.png">
+					</div>
+					<!--pic-->
+					
+					<p>02.如與上圖一樣 立即中獎</p>
+					<!--pic-->
+					<div class="pic">
+						<img src="images/pic_gift_m.png">
+					</div>
+					<!--pic-->
+				</div>
+
+				<button class="btn_start">開始</button>
+				
+			</div>
+			<!--content 結束-->
+			
+		</div>
+		<!--說明頁 結束-->
+
+		<!--中獎 開始-->
+		<div class="dialog win">
+
+			<div class="content">
+				<p>恭喜中獎</p>
+				<!--pic-->
+				<div class="pic">
+					<img src="images/pic_gift_b.png">
+				</div>
+				<!--pic-->
+
+				<!--重新遊玩 開始-->
+				<button class="btn btn_replay">再玩一次</button>
+				<!--重新遊玩 結束-->
+			</div>
+		</div>
+		<!--中獎 結束-->
+
+		<!--失敗 開始-->
+		<div class="dialog lose">
+			<div class="content">
+				<p>請再接再厲</p>
+				<!--pic-->
+				<div class="pic">
+					<img src="images/pic_lose.png">
+				</div>
+				<!--pic-->
+
+				<!--重新遊玩 開始-->
+				<button class="btn btn_replay">再玩一次</button>
+				<!--重新遊玩 結束-->
+			</div>
+		</div>
+		<!--失敗 結束-->
+
+		<!--game 開始-->
+		<div class="game">
+
+			<!--result_box 開始-->
+			<div class="result_box">
+				<h3 class="title">Lottery Game</h3>
+				<!--list 開始-->
+				<ul class="list">
+					<li>0</li>
+					<li>1</li>
+					<li>2</li>
+					<li>3</li>
+					<li>4</li>
+					<li>5</li>
+					<li>6</li>
+					<li>7</li>
+				</ul>
+				<!--list 結束-->
+			</div>
+			<!--result_box 結束-->
+
+			<!--choose_box 開始-->
+			<div class="choose_box">
+				<h3 class="title">請選擇</h3>
+				<!--bar 開始-->
+				<ul class="bar">
+					<li>0</li> 
+					<li>1</li>
+					<li>2</li>
+					<li>3</li>
+					<li>4</li>
+					<li>5</li>
+					<li>6</li>
+					<li>7</li>
+				</ul>
+				<!--bar 結束-->
+			</div>
+			<!--choose_box 結束-->
+
+			
+			<!--重新遊玩 開始-->
+			<button class="btn btn_go">GO</button>
+			<!--重新遊玩 結束-->
+			
+		</div>
+		<!--game 結束-->
+
+	</div>
+	<!--wrapper 結束-->
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+
+	<script>
+
+		//亂數
+		function fnRandom(argMin, argMax) {
+			return Math.round(argMin + Math.random() * (argMax - argMin));
+		};
+		
+		$(function(){
+
+			let iMax = fnRandom(30, 38);//總跑圈數
+			let iResultNo = iMax % 8;//中獎答案
+			let iLightNo = -1;//發光序號
+			let timerSpeed = null;//速度時間
+			let	iSpeed = 200;// 速度數
+
+			//玩家選定號碼
+			$(".choose_box .bar li").on("click", function () {
+				$(".choose_box .bar li").removeClass("active").filter(this).addClass("active");
+				iChoose = $(this).index();
+
+				//遊戲按鈕
+				$(".btn_go").css({ "display": "inline-block" });
+				console.log("玩家選", iChoose);
+			});
+			
+			console.log("總數量",iMax , "中獎結果",iResultNo);
+
+			//產生亮光
+			function fnAddLight() {
+				$(".result_box .list li").removeClass("active").eq(iLightNo % 8).addClass("active");
+				//後面需帶兩格
+				$(".result_box .list li").eq((iLightNo % 8) - 1).addClass("active");
+				$(".result_box .list li").eq((iLightNo % 8) - 2).addClass("active");
+			}
+
+			//跑亮燈
+			function run() {
+
+				if(iMax > 0){
+					iLightNo++;
+					fnAddLight();
+				}
+
+				// 跑3個後加速+最後一圈減速
+				if (iLightNo > iMax * 0.1){ iSpeed = 80;}
+				//減速
+				if(iLightNo > iMax * 0.8){ iSpeed = 400;}
+
+				console.log("速度", iSpeed);
+				//轉動
+				timerSpeed = setTimeout(run, iSpeed);
+
+				if (iLightNo === iMax) {
+
+					clearTimeout(timerSpeed);//去除加速
+
+					$(".btn_replay").css({"display":"inline-block"});
+					$(".result_box .list li").removeClass("active").eq(iResultNo).addClass("active");//尾燈消失
+
+					//結果比對
+					if (iChoose === iResultNo) {
+						$(".dialog.win").css({ "display": "block" });
+						console.log("中獎");
+					} else {
+						$(".dialog.lose").css({ "display": "inline-block" });
+						console.log("沒有中");
+					}
+				}
+			};
+
+			//執行動畫
+			$(".btn_go").on("click", function(){
+				run();
+				$(this).hide();
+				$(".choose_box .bar li").off("click");//遊戲開始後不能再按click
+			});
+			
+			//按下後隱藏dialog 說明頁
+			$(".btn_start").on("click", function(){
+				$(".dialog").hide();
+			});
+
+			//重新遊戲
+			$(".btn_replay").click(function () {
+				window.location.reload();
+			});
+			
+		});
+	</script>
+</body>
+</html>
